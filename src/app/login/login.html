@@ -1,0 +1,99 @@
+<div class="login-container">
+  <div class="login-content">
+    <div class="login-header">
+      <h1><span class="highlight">Login</span></h1>
+      <p class="login-subtitle">Welcome back! Please log in to access your account.</p>
+    </div>
+
+    <form class="login-form">
+      <div class="form-row">
+        <div class="form-group">
+          <input type="email" id="email" name="email" placeholder="Enter your Email" required>
+        </div>
+        
+        <div class="form-group password-group">
+          <input type="password" id="password" name="password" placeholder="Enter your Password" required>
+          <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+            <span class="eye-icon">👁️</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-options">
+        <a href="#" class="forgot-password">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="login-btn primary">Login</button>
+      
+      <button type="button" class="signup-btn secondary" (click)="navigateToSignup()">Sign Up</button>
+
+      <div class="divider">
+        <span>Or Continue with</span>
+      </div>
+
+      <div class="social-login">
+        <button type="button" class="social-btn google">
+          <span class="social-icon">G</span>
+        </button>
+        <button type="button" class="social-btn facebook">
+          <span class="social-icon">f</span>
+        </button>
+        <button type="button" class="social-btn apple">
+          <span class="social-icon">🍎</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="logo-icon">🏦</span>
+          <span class="logo-text">YourBank</span>
+        </div>
+        <nav class="footer-nav">
+          <a routerLink="/home" class="footer-link">Home</a>
+          <a routerLink="/career" class="footer-link">Careers</a>
+          <a routerLink="/about" class="footer-link">About</a>
+          <a class="footer-link">Security</a>
+        </nav>
+      </div>
+      
+      <div class="footer-contact">
+        <div class="contact-item">
+          <span class="contact-icon">📧</span>
+          <span>hello&#64;skillbridge.com</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">📞</span>
+          <span>+91 9813 23 2309</span>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">📍</span>
+          <span>Somewhere in the World</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-social">
+        <a href="#" class="social-link facebook">📘</a>
+        <a href="#" class="social-link twitter">🐦</a>
+        <a href="#" class="social-link linkedin">💼</a>
+      </div>
+      
+      <div class="footer-legal">
+        <span>YourBank All Rights Reserved</span>
+        <div class="legal-links">
+          <a href="#" class="legal-link">Privacy Policy</a>
+          <span>|</span>
+          <a href="#" class="legal-link">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

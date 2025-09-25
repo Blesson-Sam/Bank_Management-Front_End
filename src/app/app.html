@@ -1,0 +1,71 @@
+<!-- Top Navigation Bar -->
+<div class="wrapper">
+  <nav class="top-nav">
+  
+  <div class="nav-brand">
+    <div class="logo">
+      <span class="logo-icon">🏦</span>
+      <span class="logo-text">YourBank</span>
+    </div>
+  </div>
+  
+  <!-- Desktop Navigation -->
+  <div class="nav-menu desktop-nav">
+    <a routerLink="/home" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Home</a>
+    <a routerLink="/career" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Careers</a>
+    <a routerLink="/about" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">About</a>
+    <a routerLink="/contact" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Contact</a>
+  </div>
+  
+  <div class="nav-actions">
+    <button class="theme-toggle" (click)="toggleTheme()" title="Toggle theme">
+      <span class="theme-icon">
+        @if (isDarkMode()) {
+          ☀️
+        } @else {
+          🌙
+        }
+      </span>
+    </button>
+    <div class="desktop-nav">
+      <button class="nav-btn secondary" (click)="navigateToSignup()">Sign Up</button>
+      <button class="nav-btn primary" (click)="navigateToLogin()">Login</button>
+    </div>
+    
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" title="Toggle menu">
+      <span class="hamburger">
+        @if (isMobileMenuOpen()) {
+          ✕
+        } @else {
+          ☰
+        }
+      </span>
+    </button>
+  </div>
+  
+</nav>
+
+  <!-- Mobile Menu Overlay -->
+  @if (isMobileMenuOpen()) {
+    <div class="mobile-menu-overlay" (click)="closeMobileMenu()" (keydown.escape)="closeMobileMenu()">
+      <div class="mobile-menu" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+        <div class="mobile-menu-content">
+          <div class="mobile-nav-links">
+            <a routerLink="/home" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">Home</a>
+            <a routerLink="/career" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">Careers</a>
+            <a routerLink="/about" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">About</a>
+            <a routerLink="/contact" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">Contact</a>
+          </div>
+          
+          <div class="mobile-nav-actions">
+            <button class="nav-btn secondary mobile-btn" (click)="navigateToSignup(); closeMobileMenu()">Sign Up</button>
+            <button class="nav-btn primary mobile-btn" (click)="navigateToLogin(); closeMobileMenu()">Login</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <router-outlet></router-outlet>
+</div>

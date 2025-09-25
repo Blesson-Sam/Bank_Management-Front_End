@@ -1,0 +1,119 @@
+/* Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* CSS Custom Properties for Theme System */
+:root {
+  /* Light Theme Colors */
+  --primary-green: #4dc98a;
+  --primary-green-rgb: 77, 201, 138;
+  --background-color: #ffffff;
+  --text-primary: #1b1b1b;
+  --text-secondary: #666666;
+  --card-background: #f8f9fa;
+  --border-color: #e5e7eb;
+  --hover-background: #f3f4f6;
+  --gradient-start: #f8fafc;
+  --gradient-middle: #e2e8f0;
+  --gradient-end: #cbd5e1;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --primary-green: #63e7aa;
+  --primary-green-rgb: 99, 231, 170;
+  --background-color: #0a0a0a;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --card-background: #1a1a1a;
+  --border-color: #2a2a2a;
+  --hover-background: #252525;
+  --gradient-start: #0a0a0a;
+  --gradient-middle: #1a1a1a;
+  --gradient-end: #0f0f0f;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-middle) 50%, var(--gradient-end) 100%);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--card-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(202, 255, 50, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(202, 255, 50, 0.5);
+}
+
+/* Global Responsive Utilities */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Mobile-first responsive breakpoints */
+@media (min-width: 576px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    padding: 0 2.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    padding: 0 3rem;
+  }
+}
+
+/* Responsive text utilities */
+.text-responsive {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.title-responsive {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.heading-responsive {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+}
