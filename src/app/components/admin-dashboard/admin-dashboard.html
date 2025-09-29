@@ -1,0 +1,941 @@
+<div class="admin-dashboard-container">
+  <!-- Admin Sidebar Navigation -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="admin-logo">
+        <span class="logo-text">Admin Portal</span>
+        <!-- <span class="user-type-badge">ADMIN</span> -->
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <h3>Dashboard</h3>
+        <ul>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection() === 'overview'"
+              (click)="setActiveSection('overview')"
+            >
+              <span class="nav-icon">📊</span>
+              <span>Overview</span>
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item"
+              [class.active]="activeSection() === 'users'"
+              (click)="setActiveSection('users')"
+            >
+              <span class="nav-icon">👥</span>
+              <span>User Management</span>
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection() === 'accounts'"
+              (click)="setActiveSection('accounts')"
+            >
+              <span class="nav-icon">🏦</span>
+              <span>Account Management</span>
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection() === 'transactions'"
+              (click)="setActiveSection('transactions')"
+            >
+              <span class="nav-icon">💳</span>
+              <span>Transactions</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- <div class="nav-section">
+        <h3>Analytics</h3>
+        <ul>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection() === 'reports'"
+              (click)="setActiveSection('reports')"
+            >
+              <span class="nav-icon">📈</span>
+              <span>Reports</span>
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection() === 'analytics'"
+              (click)="setActiveSection('analytics')"
+            >
+              <span class="nav-icon">📊</span>
+              <span>Analytics</span>
+            </button>
+          </li>
+        </ul>
+      </div> -->
+      
+      <!-- <div class="nav-section">
+        <h3>System</h3>
+        <ul>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection() === 'settings'"
+              (click)="setActiveSection('settings')"
+            >
+              <span class="nav-icon">⚙️</span>
+              <span>Settings</span>
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection() === 'audit'"
+              (click)="setActiveSection('audit')"
+            >
+              <span class="nav-icon">🔍</span>
+              <span>Audit Logs</span>
+            </button>
+          </li>
+        </ul>
+      </div> -->
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="admin-profile">
+        <div class="profile-info">
+          <span class="admin-name">{{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</span>
+          <span class="admin-role">System Administrator</span>
+        </div>
+        <button class="logout-btn" (click)="logout()">
+          <!-- <span>🚪</span> -->
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Admin Main Content -->
+  <main class="admin-main-content">
+    <header class="admin-header">
+      <h1 class="page-title">
+        @switch (activeSection()) {
+          @case ('overview') { Admin Dashboard Overview }
+          @case ('users') { User Management }
+          @case ('accounts') { Account Management }
+          @case ('transactions') { Transaction Management }
+          @case ('reports') { Reports & Analytics }
+          @case ('analytics') { System Analytics }
+          @case ('settings') { System Settings }
+          @case ('audit') { Audit Logs }
+          @default { Admin Dashboard }
+        }
+      </h1>
+      <div class="admin-actions">
+        <div class="address-display">
+          Welcome back, <strong>{{ currentUser()?.firstName }}</strong>
+        </div>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      @switch (activeSection()) {
+        @case ('overview') {
+          <div class="admin-overview">
+            <div class="stats-grid">
+
+              <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-info">
+                  <h3>Total Balance</h3>
+                  @if (isLoadingAccounts()) {
+                    <div class="loading-text">Loading...</div>
+                  } @else if (accountsError()) {
+                    <div class="error-text">Error</div>
+                  } @else {
+                    <p class="stat-number">{{ formatCurrency(getTotalBalance()) }}</p>
+                  }
+                </div>
+                @if (accountsError()) {
+                  <div class="stat-error">
+                    <span class="error-message">{{ accountsError() }}</span>
+                    <button class="retry-btn" (click)="loadAccountsForOverview()">↻</button>
+                  </div>
+                }
+              </div>
+              <!-- Customers Card -->
+              <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                  <h3>Total Customers</h3>
+                  @if (isLoadingCustomers()) {
+                    <div class="loading-text">Loading...</div>
+                  } @else if (customersError()) {
+                    <div class="error-text">Error</div>
+                  } @else {
+                    <p class="stat-number">{{ customers().length || 0 }}</p>
+                  }
+                </div>
+                @if (customersError()) {
+                  <div class="stat-error">
+                    <span class="error-message">{{ customersError() }}</span>
+                    <button class="retry-btn" (click)="loadCustomersForOverview()">↻</button>
+                  </div>
+                }
+              </div>
+
+              <!-- Accounts Card -->
+              <div class="stat-card">
+                <div class="stat-icon">🏦</div>
+                <div class="stat-info">
+                  <h3>Total Accounts</h3>
+                  @if (isLoadingAccounts()) {
+                    <div class="loading-text">Loading...</div>
+                  } @else if (accountsError()) {
+                    <div class="error-text">Error</div>
+                  } @else {
+                    <p class="stat-number">{{ allAccounts().length || 0 }}</p>
+                  }
+                </div>
+                @if (accountsError()) {
+                  <div class="stat-error">
+                    <span class="error-message">{{ accountsError() }}</span>
+                    <button class="retry-btn" (click)="loadAccountsForOverview()">↻</button>
+                  </div>
+                }
+              </div>
+
+              <!-- Total Transactions Card -->
+              <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-info">
+                  <h3>Total Transactions</h3>
+                  @if (isLoadingTransactions()) {
+                    <div class="loading-text">Loading...</div>
+                  } @else if (transactionsError()) {
+                    <div class="error-text">Error</div>
+                  } @else {
+                    <p class="stat-number">{{ allTransactions().length || 0 }}</p>
+                  }
+                </div>
+                @if (transactionsError()) {
+                  <div class="stat-error">
+                    <span class="error-message">{{ transactionsError() }}</span>
+                    <button class="retry-btn" (click)="loadTransactionsForOverview()">↻</button>
+                  </div>
+                }
+              </div>              <!-- Total Balance Card -->
+              
+
+              <!-- Transactions Card -->
+              <!-- <div class="stat-card">
+                <div class="stat-icon">�</div>
+                <div class="stat-info">
+                  <h3>Total Transactions</h3>
+                  @if (isLoadingTransactions()) {
+                    <div class="loading-text">Loading...</div>
+                  } @else if (transactionsError()) {
+                    <div class="error-text">Error</div>
+                  } @else {
+                    <p class="stat-number">{{ allTransactions().length.toLocaleString() }}</p>
+                  }
+                </div>
+                @if (transactionsError()) {
+                  <div class="stat-error">
+                    <span class="error-message">{{ transactionsError() }}</span>
+                    <button class="retry-btn" (click)="loadTransactionsForOverview()">↻</button>
+                  </div>
+                }
+              </div> -->
+
+              <!-- Today's Transactions Card -->
+              <!-- <div class="stat-card">
+                <div class="stat-icon">�</div>
+                <div class="stat-info">
+                  <h3>Today's Transactions</h3>
+                  @if (isLoadingTransactions()) {
+                    <div class="loading-text">Loading...</div>
+                  } @else if (transactionsError()) {
+                    <div class="error-text">Error</div>
+                  } @else {
+                    <p class="stat-number">{{ getTodaysTransactions().toLocaleString() }}</p>
+                  }
+                </div>
+                @if (transactionsError()) {
+                  <div class="stat-error">
+                    <span class="error-message">{{ transactionsError() }}</span>
+                    <button class="retry-btn" (click)="loadTransactionsForOverview()">↻</button>
+                  </div>
+                }
+              </div> -->
+            </div>
+            
+            <div class="admin-charts">
+              <div class="chart-container">
+                <div class="chart-header">
+                  <h3>📊 Transaction Volume Overview</h3>
+                  <div class="chart-stats">
+                    <span class="total-amount">Total: {{ formatCurrency(getTotalTransactionAmount()) }}</span>
+                  </div>
+                </div>
+                
+                <div class="chart-content">
+                  <!-- Transaction Type Chart -->
+                  <div class="transaction-chart">
+                    <h4>Transaction Types</h4>
+                    <div class="chart-bars">
+                      @if (getTransactionTypeData().length > 0) {
+                        @for (typeData of getTransactionTypeData(); track typeData.type) {
+                          <div class="chart-bar-container">
+                            <div class="chart-bar-wrapper">
+                              <div 
+                                class="chart-bar" 
+                                [class]="typeData.type"
+                                [style.height.%]="typeData.percentage"
+                                [title]="typeData.type + ': ' + typeData.count + ' transactions (' + typeData.percentage + '%)'">
+                                <div class="bar-value">{{ typeData.count }}</div>
+                              </div>
+                            </div>
+                            <div class="chart-label">
+                              <span class="type-name">{{ typeData.type.toUpperCase() }}</span>
+                              <span class="type-percentage">{{ typeData.percentage }}%</span>
+                            </div>
+                          </div>
+                        }
+                      } @else {
+                        <div class="no-chart-data">
+                          <p>📈 No transaction data available</p>
+                          <small>Transaction data will appear here once transactions are processed</small>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Account Type Distribution -->
+                  <div class="account-distribution">
+                    <h4>Account Types Distribution</h4>
+                    <div class="distribution-list">
+                      @if (getAccountTypeData().length > 0) {
+                        @for (accountData of getAccountTypeData(); track accountData.type) {
+                          <div class="distribution-item">
+                            <div class="distribution-info">
+                              <span class="account-type-name">{{ accountData.type }}</span>
+                              <span class="account-count">{{ accountData.count }} accounts</span>
+                            </div>
+                            <div class="distribution-bar">
+                              <div 
+                                class="distribution-fill" 
+                                [class]="accountData.type.toLowerCase()"
+                                [style.width.%]="accountData.percentage">
+                              </div>
+                            </div>
+                            <span class="distribution-percentage">{{ accountData.percentage }}%</span>
+                          </div>
+                        }
+                      } @else {
+                        <div class="no-chart-data">
+                          <p>🏦 No account data available</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quick Stats Summary -->
+                <div class="chart-summary">
+                  <div class="summary-item">
+                    <div class="summary-icon">💳</div>
+                    <div class="summary-details">
+                      <span class="summary-label">Avg Transaction</span>
+                      <span class="summary-value">{{ formatCurrency(getAverageTransactionAmount()) }}</span>
+                    </div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-icon">📈</div>
+                    <div class="summary-details">
+                      <span class="summary-label">Most Active Type</span>
+                      <span class="summary-value">{{ getMostActiveTransactionType() }}</span>
+                    </div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-icon">🏆</div>
+                    <div class="summary-details">
+                      <span class="summary-label">Total Accounts</span>
+                      <span class="summary-value">{{ allAccounts().length }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        
+        @case ('users') {
+          <div class="admin-users">
+            <!-- <div class="section-header">
+              <h2>User Management</h2>
+              <button class="admin-btn primary">Add New User</button>
+            </div> -->
+            
+            @if (isLoadingCustomers()) {
+              <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading customers...</p>
+              </div>
+            } @else if (customersError()) {
+              <div class="error-container">
+                <p class="error-message">{{ customersError() }}</p>
+                <button class="admin-btn primary" (click)="loadCustomers()">Retry</button>
+              </div>
+            } @else {
+              <div class="admin-table-container">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <!-- <th>Type</th> -->
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @if (customers().length === 0) {
+                      <tr>
+                        <td colspan="7" class="no-data">No customers found</td>
+                      </tr>
+                    } @else {
+                      @for (customer of customers(); track customer.id) {
+                        <tr>
+                          <td>#{{ customer.id.toString().padStart(3, '0') }}</td>
+                          <td>{{ customer.firstName }} {{ customer.lastName }}</td>
+                          <td>{{ customer.email }}</td>
+                          <td>{{ customer.phone }}</td>
+                          <!-- <td>{{ customer.userType }}</td> -->
+                          <td>
+                            <span class="status" [class]="customer.status.toLowerCase()">
+                              {{ customer.status }}
+                            </span>
+                          </td>
+                          <td>
+                            <button 
+                              class="admin-btn small" 
+                              (click)="openStatusModal(customer)"
+                              title="Edit Customer Status"
+                            >
+                              ✏️
+                            </button>
+                        
+                            <button 
+                              class="admin-btn small danger" 
+                              (click)="openDeleteCustomerModal(customer)"
+                              title="Delete Customer"
+                            >
+                              🗑️
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        }
+
+        @case ('accounts') {
+          <div class="admin-accounts">
+            <div class="section-header">
+              <!-- <button class="admin-btn primary">Create New Account</button> -->
+            </div>
+            
+            @if (isLoadingAccounts()) {
+              <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading accounts...</p>
+              </div>
+            } @else if (accountsError()) {
+              <div class="error-container">
+                <p class="error-message">{{ accountsError() }}</p>
+                <button class="admin-btn primary" (click)="loadAccounts()">Retry</button>
+              </div>
+            } @else {
+              <div class="admin-table-container">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Account Number</th>
+                      <th>Customer</th>
+                      <th>Account Type</th>
+                      <th>Balance</th>
+                      <th>Interest Rate</th>
+                      <th>Status</th>
+                      <th>Created Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @if (allAccounts().length === 0) {
+                      <tr>
+                        <td colspan="8" class="no-data">No accounts found</td>
+                      </tr>
+                    } @else {
+                      @for (account of allAccounts(); track account.accountNumber) {
+                        <tr>
+                          <td class="account-number">{{ account.accountNumber }}</td>
+                          <td>{{ account.customerName }}</td>
+                          <td>
+                            <span class="account-type" [class]="account.accountType.toLowerCase()">
+                              {{ account.accountType }}
+                            </span>
+                          </td>
+                          <td class="balance">{{ formatCurrency(account.balance) }}</td>
+                          <td class="interest-rate">{{ account.interestRate }}%</td>
+                          <td>
+                            <span class="status" [class]="account.status.toLowerCase()">
+                              {{ account.status }}
+                            </span>
+                          </td>
+                          <td>{{ formatDate(account.createdAt) }}</td>
+                          <td>
+                            <button 
+                              class="admin-btn small" 
+                              (click)="openAccountStatusModal(account)"
+                              title="Edit Account Status"
+                            >
+                              ✏️
+                            </button>
+                            <button 
+                              class="admin-btn small danger" 
+                              (click)="openDeleteAccountModal(account)"
+                              title="Delete Account"
+                            >
+                              🗑️
+                            </button>
+
+
+                          </td>
+                        </tr>
+                      }
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        }
+
+        @case ('transactions') {
+          <div class="admin-transactions">
+            <div class="section-header">
+              <h2></h2>
+              <div class="section-actions">
+                <select 
+                  class="filter-select" 
+                  [value]="transactionFilter()"
+                  (change)="onTransactionFilterChange($event)"
+                >
+                  <option value="all">All Types</option>
+                  <option value="deposit">Deposit</option>
+                  <option value="withdrawal">Withdrawal</option>
+                  <option value="transfer">Transfer</option>
+                </select>
+                <div class="transaction-count">
+                  Showing {{ filteredTransactions().length }} of {{ allTransactions().length }} transactions
+                </div>
+              </div>
+            </div>
+            
+            @if (isLoadingTransactions()) {
+              <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading transactions...</p>
+              </div>
+            } @else if (transactionsError()) {
+              <div class="error-container">
+                <p class="error-message">{{ transactionsError() }}</p>
+                <button class="admin-btn primary" (click)="loadTransactions()">Retry</button>
+              </div>
+            } @else {
+              <div class="admin-table-container">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Transaction ID</th>
+                      <th>Type</th>
+                      <th>Amount</th>
+                      <th>From Account</th>
+                      <th>To Account</th>
+                      <th>Description</th>
+                      <th>Status</th>
+                      <th>Date</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @if (filteredTransactions().length === 0) {
+                      <tr>
+                        <td colspan="8" class="no-data">
+                          @if (transactionFilter() === 'all') {
+                            No transactions found
+                          } @else {
+                            No {{ transactionFilter() }} transactions found
+                          }
+                        </td>
+                      </tr>
+                    } @else {
+                      @for (transaction of filteredTransactions(); track transaction.id) {
+                        <tr>
+                          <td class="transaction-id">{{ transaction.id }}</td>
+
+                          <td>
+                            <span class="transaction-type" [class]="transaction.type">
+                              {{ transaction.type.toUpperCase() }}
+                            </span>
+                          </td>
+                          <td class="amount" [class]="transaction.type">
+                            {{ formatCurrency(transaction.amount) }}
+                          </td>
+                          <td class="account-ref">{{ transaction.fromAccountNumber || '-' }}</td>
+                          <td class="account-ref">{{ transaction.toAccountNumber || '-' }}</td>
+                          <td class="description">{{ transaction.description }}</td>
+                          <td>
+                            <span class="status" [class]="transaction.status.toLowerCase()">
+                              {{ transaction.status }}
+                            </span>
+                          </td>
+                          <td>{{ formatDate(transaction.completedAt) }}</td>
+
+                        </tr>
+                      }
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
+        }
+        
+        @default {
+          <div class="admin-placeholder">
+            <h2>{{ activeSection() | titlecase }} Section</h2>
+            <p>This admin section is under development.</p>
+          </div>
+        }
+      }
+    </div>
+  </main>
+
+  <!-- Customer Status Modal -->
+  @if (showStatusModal()) {
+    <div class="modal-overlay" (click)="closeStatusModal()" (keydown.escape)="closeStatusModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Update Customer Status</h3>
+          <button class="close-btn" (click)="closeStatusModal()">×</button>
+        </div>
+        
+        <div class="modal-body">
+          @if (selectedCustomer()) {
+            <div class="customer-info">
+              <p><strong>Customer:</strong> {{ selectedCustomer()!.firstName }} {{ selectedCustomer()!.lastName }}</p>
+              <p><strong>Email:</strong> {{ selectedCustomer()!.email }}</p>
+              <p><strong>Current Status:</strong> 
+                <span class="status" [class]="selectedCustomer()!.status.toLowerCase()">
+                  {{ selectedCustomer()!.status }}
+                </span>
+              </p>
+            </div>
+            
+            <div class="form-group">
+              <label for="customerStatus">New Status:</label>
+              <select 
+                id="customerStatus"
+                class="status-select"
+                [value]="selectedStatus()"
+                (change)="onStatusChange($event)"
+                [disabled]="isUpdatingStatus()"
+              >
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+                <option value="SUSPENDED">SUSPENDED</option>
+              </select>
+            </div>
+          }
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            class="btn-secondary" 
+            (click)="closeStatusModal()"
+            [disabled]="isUpdatingStatus()"
+          >
+            Cancel
+          </button>
+          <button 
+            class="btn-primary" 
+            (click)="updateCustomerStatus()"
+            [disabled]="isUpdatingStatus() || selectedStatus() === selectedCustomer()?.status"
+          >
+            @if (isUpdatingStatus()) {
+              <span>Updating...</span>
+            } @else {
+              <span>Update Status</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Account Status Modal -->
+  @if (showAccountStatusModal()) {
+    <div class="modal-overlay" (click)="closeAccountStatusModal()" (keydown.escape)="closeAccountStatusModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Update Account Status</h3>
+          <button class="close-btn" (click)="closeAccountStatusModal()">×</button>
+        </div>
+        
+        <div class="modal-body">
+          @if (selectedAccount()) {
+            <div class="customer-info">
+              <p><strong>Account Number:</strong> {{ selectedAccount()!.accountNumber }}</p>
+              <p><strong>Account Type:</strong> {{ selectedAccount()!.accountType }}</p>
+              <p><strong>Customer:</strong> {{ selectedAccount()!.customerName }}</p>
+              <p><strong>Balance:</strong> {{ formatCurrency(selectedAccount()!.balance) }}</p>
+              <p><strong>Current Status:</strong> 
+                <span class="status" [class]="selectedAccount()!.status.toLowerCase()">
+                  {{ selectedAccount()!.status }}
+                </span>
+              </p>
+            </div>
+            
+            <div class="form-group">
+              <label for="accountStatus">New Status:</label>
+              <select 
+                id="accountStatus"
+                class="status-select"
+                [value]="selectedAccountStatus()"
+                (change)="onAccountStatusChange($event)"
+                [disabled]="isUpdatingAccountStatus()"
+              >
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+                <option value="CLOSED">CLOSED</option>
+                <option value="FROZEN">FROZEN</option>
+              </select>
+            </div>
+          }
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            class="btn-secondary" 
+            (click)="closeAccountStatusModal()"
+            [disabled]="isUpdatingAccountStatus()"
+          >
+            Cancel
+          </button>
+          <button 
+            class="btn-primary" 
+            (click)="updateAccountStatus()"
+            [disabled]="isUpdatingAccountStatus() || selectedAccountStatus() === selectedAccount()?.status"
+          >
+            @if (isUpdatingAccountStatus()) {
+              <span>Updating...</span>
+            } @else {
+              <span>Update Status</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Account Modal -->
+  @if (showDeleteAccountModal()) {
+    <div class="modal-overlay" (click)="closeDeleteAccountModal()" (keydown.escape)="closeDeleteAccountModal()">
+      <div class="modal-content delete-modal" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>🗑️ Delete Account</h3>
+          <button class="close-btn" (click)="closeDeleteAccountModal()">×</button>
+        </div>
+        
+        <div class="modal-body">
+          @if (selectedAccountForDelete()) {
+            <div class="delete-warning">
+              <div class="warning-icon">⚠️</div>
+              <h4>Are you sure you want to delete this account?</h4>
+              <p class="warning-text">This action cannot be undone and will permanently remove the account from the system.</p>
+            </div>
+
+            <div class="account-details">
+              <h5>Account Information:</h5>
+              <div class="detail-row">
+                <span class="label">Account Number:</span>
+                <span class="value">{{ selectedAccountForDelete()!.accountNumber }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Account Type:</span>
+                <span class="value">{{ selectedAccountForDelete()!.accountType }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Customer:</span>
+                <span class="value">{{ selectedAccountForDelete()!.customerName }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Current Balance:</span>
+                <span class="value balance" [class.positive]="selectedAccountForDelete()!.balance > 0" [class.zero]="selectedAccountForDelete()!.balance === 0">
+                  {{ formatCurrency(selectedAccountForDelete()!.balance) }}
+                </span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Status:</span>
+                <span class="value">
+                  <span class="status" [class]="selectedAccountForDelete()!.status.toLowerCase()">
+                    {{ selectedAccountForDelete()!.status }}
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            @if (selectedAccountForDelete()!.balance > 0) {
+              <div class="balance-warning">
+                <div class="balance-alert">
+                  <span class="alert-icon">💰</span>
+                  <div class="alert-content">
+                    <strong>Balance Alert:</strong> This account has a positive balance of {{ formatCurrency(selectedAccountForDelete()!.balance) }}.
+                    <br>Please ensure the balance is transferred or withdrawn before deletion.
+                  </div>
+                </div>
+              </div>
+            }
+          }
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            class="btn-secondary" 
+            (click)="closeDeleteAccountModal()"
+            [disabled]="isDeletingAccount()"
+          >
+            Cancel
+          </button>
+          <button 
+            class="btn-danger" 
+            (click)="confirmDeleteAccount()"
+            [disabled]="isDeletingAccount()"
+          >
+            @if (isDeletingAccount()) {
+              <span>🔄 Deleting...</span>
+            } @else {
+              <span>🗑️ Delete Account</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Customer Modal -->
+  @if (showDeleteCustomerModal()) {
+    <div class="modal-overlay" (click)="closeDeleteCustomerModal()" (keydown.escape)="closeDeleteCustomerModal()">
+      <div class="modal-content delete-modal" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>🗑️ Delete Customer</h3>
+          <button class="close-btn" (click)="closeDeleteCustomerModal()">×</button>
+        </div>
+        
+        <div class="modal-body">
+          @if (selectedCustomerForDelete()) {
+            <div class="delete-warning">
+              <div class="warning-icon">⚠️</div>
+              <h4>Are you sure you want to delete this customer?</h4>
+              <p class="warning-text">This action cannot be undone and will permanently remove the customer and all associated data from the system.</p>
+            </div>
+
+            <div class="account-details">
+              <h5>Customer Information:</h5>
+              <div class="detail-row">
+                <span class="label">Customer ID:</span>
+                <span class="value">#{{ selectedCustomerForDelete()!.id }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Full Name:</span>
+                <span class="value">{{ selectedCustomerForDelete()!.firstName }} {{ selectedCustomerForDelete()!.lastName }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Email:</span>
+                <span class="value">{{ selectedCustomerForDelete()!.email }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Phone:</span>
+                <span class="value">{{ selectedCustomerForDelete()!.phone }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Status:</span>
+                <span class="value">
+                  <span class="status" [class]="selectedCustomerForDelete()!.status.toLowerCase()">
+                    {{ selectedCustomerForDelete()!.status }}
+                  </span>
+                </span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Member Since:</span>
+                <span class="value">{{ formatDate(selectedCustomerForDelete()!.createdAt) }}</span>
+              </div>
+            </div>
+
+            <div class="data-warning">
+              <div class="data-alert">
+                <span class="alert-icon">📋</span>
+                <div class="alert-content">
+                  <strong>Data Impact:</strong> Deleting this customer will also remove:
+                  <ul>
+                    <li>All associated bank accounts</li>
+                    <li>Transaction history</li>
+                    <li>Personal information and documents</li>
+                    <li>Communication preferences</li>
+                  </ul>
+                  <p>Please ensure all accounts are closed and balances are zero before proceeding.</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            class="btn-secondary" 
+            (click)="closeDeleteCustomerModal()"
+            [disabled]="isDeletingCustomer()"
+          >
+            Cancel
+          </button>
+          <button 
+            class="btn-danger" 
+            (click)="confirmDeleteCustomer()"
+            [disabled]="isDeletingCustomer()"
+          >
+            @if (isDeletingCustomer()) {
+              <span>🔄 Deleting...</span>
+            } @else {
+              <span>🗑️ Delete Customer</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

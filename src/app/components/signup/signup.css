@@ -1,0 +1,567 @@
+/* Banking Dashboard - Signup Page */
+.signup-container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  color: var(--text-primary);
+  background: var(--background-color);
+  font-family: KantarBrown, Roboto, Helvetica, Arial, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* For larger screens, use grid layout */
+@media (min-width: 768px) {
+  .signup-container {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+  }
+}
+
+
+
+.left-content {
+  /* max-width: 40%; */
+  top: -10rem;
+  left: 12rem;
+  max-width: 70%;
+  z-index: 3;
+  position: relative;
+}
+
+.left-content h1 {
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  /* margin-left: ; */
+}
+
+.description {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary)
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+}
+
+.features-list li {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.features-list li::before {
+  content: '•';
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  position: absolute;
+  left: 0;
+  top: -0.05rem;
+}
+
+.cta-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Right Side - Form */
+
+.signup-left {
+  background: var(--background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem 2rem 2rem;
+  width: 100%;
+}
+
+.signup-right {
+  background: var(--background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem 2rem 2rem;
+}
+
+.signup-modal {
+  background: white;
+  /* border-radius: 8px; */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+}
+
+.signup-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.signup-header h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.login-prompt {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.login-link {
+  color: #000;
+  text-decoration: underline;
+}
+
+.login-link:hover {
+  text-decoration: none;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  /* border-radius: 4px; */
+  font-size: 1rem;
+  color: #333;
+  background: white;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  color: #333;
+  background: white;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.form-group select option {
+  padding: 0.5rem;
+  color: #333;
+}
+
+/* .checkbox-group {
+  margin-top: 0.5rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: #666;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  flex-shrink: 0;
+} */
+
+/* .terms-link {
+  color: #000;
+  text-decoration: underline;
+}
+
+.terms-link:hover {
+  text-decoration: none;
+} */
+
+.create-account-btn {
+  width: 100%;
+  background: var(--text-color);
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.01em;
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: none;
+  position: relative;
+  z-index: 2;
+  margin-top: 1rem;
+}
+
+.create-account-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--text-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+}
+
+.create-account-btn:hover {
+  background: var(--text-color);
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.create-account-btn:hover::after {
+  width: calc(100% - 64px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .signup-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .signup-left {
+    padding: 1.5rem;
+    min-height: 30vh;
+  }
+  
+  .left-content h1 {
+    font-size: 1.6rem;
+  }
+  
+  .signup-right {
+    padding: 1rem;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .signup-left {
+    padding: 1rem;
+    min-height: 25vh;
+  }
+  
+  .left-content h1 {
+    font-size: 1.4rem;
+  }
+  
+  .description {
+    font-size: 0.85rem;
+  }
+  
+  .features-list li {
+    font-size: 0.75rem;
+  }
+  
+  .cta-text {
+    font-size: 0.85rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .signup-modal {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .signup-left {
+    padding: 0.75rem;
+    min-height: 20vh;
+  }
+  
+  .left-content h1 {
+    font-size: 1.2rem;
+  }
+  
+  .signup-modal {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+  
+  .signup-header h2 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Error and Success Messages */
+.error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  color: #c33;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: 1rem;
+}
+
+.success-message {
+  background-color: #efe;
+  border: 1px solid #cfc;
+  border-radius: 4px;
+  color: #363;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.success-message::before {
+  content: '✅';
+  font-size: 1rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Disabled form elements */
+input[disabled], button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button loading state */
+.create-account-btn:disabled {
+  background: var(--text-tertiary);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.create-account-btn:disabled:hover {
+  background: var(--text-tertiary);
+  color: var(--text-secondary);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+  background: var(--card-background);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 2rem 1.5rem;
+    /* margin-bottom: 2rem; */
+  width: 100%;
+  flex-shrink: 0;
+}
+
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.footer-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.footer-logo .logo-icon {
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green) 100%);
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.footer-link:hover {
+  color: var(--primary-green);
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.contact-icon {
+  font-size: 1.1rem;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--primary-green);
+  color: var(--background-color);
+  border-radius: 50%;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(202, 255, 50, 0.3);
+}
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.legal-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legal-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.legal-link:hover {
+  color: var(--primary-green);
+}

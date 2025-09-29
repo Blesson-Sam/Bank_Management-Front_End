@@ -1,0 +1,186 @@
+<div class="signup-container">
+  <div class="signup-left">
+    <div class="left-content">
+      <h1>BANKING MADE<br>SIMPLE AND SECURE</h1>
+      <p class="description">Take control of your finances with our comprehensive and user-friendly banking platform.</p>
+      
+      <ul class="features-list">
+        <li>Open your account in minutes</li>
+        <li>Manage all your accounts from one dashboard</li>
+        <li>Access 24/7 customer support</li>
+        <li>Work with financial advisors to help you achieve your goals</li>
+        <li>Enjoy competitive rates with no hidden fees</li>
+      </ul>
+      
+      <p class="cta-text">Join thousands of satisfied customers banking with Aurora Bank today.</p>
+    </div>
+  </div>
+  
+  <div class="signup-right">
+    <div class="signup-modal">
+      <div class="signup-header">
+        <h2>Join Aurora Bank</h2>
+        <p class="login-prompt">
+          Already have an account? 
+          <a href="#" class="login-link" (click)="navigateToLogin()">Log in</a>
+        </p>
+      </div>
+
+      <form class="signup-form" (ngSubmit)="onSubmit()" #signupForm="ngForm">
+        <!-- Success Message -->
+        @if (successMessage()) {
+          <div class="success-message">
+            {{ successMessage() }}
+          </div>
+        }
+        
+        <!-- Error Message -->
+        @if (errorMessage()) {
+          <div class="error-message">
+            {{ errorMessage() }}
+          </div>
+        }
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First name</label>
+            <input 
+              type="text" 
+              id="firstName" 
+              name="firstName" 
+              [(ngModel)]="firstName"
+              (input)="clearError()"
+              [disabled]="isLoading()"
+              required
+            >
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last name</label>
+            <input 
+              type="text" 
+              id="lastName" 
+              name="lastName" 
+              [(ngModel)]="lastName"
+              (input)="clearError()"
+              [disabled]="isLoading()"
+              required
+            >
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Business email</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            [(ngModel)]="email"
+            (input)="clearError()"
+            [disabled]="isLoading()"
+            placeholder="name@company.com"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            [(ngModel)]="password"
+            (input)="clearError()"
+            [disabled]="isLoading()"
+            placeholder="Enter your password (min 6 characters)"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone" 
+            [(ngModel)]="phone"
+            (input)="clearError()"
+            [disabled]="isLoading()"
+            placeholder="1234567890"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input 
+            type="text" 
+            id="address" 
+            name="address" 
+            [(ngModel)]="address"
+            (input)="clearError()"
+            [disabled]="isLoading()"
+            placeholder="123 Main St, City, State"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select 
+            id="gender" 
+            name="gender" 
+            [(ngModel)]="gender"
+            (change)="clearError()"
+            [disabled]="isLoading()"
+            required
+          >
+            <option value="">Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="nationalId">National ID</label>
+          <input 
+            type="text" 
+            id="nationalId" 
+            name="nationalId" 
+            [(ngModel)]="nationalId"
+            (input)="clearError()"
+            [disabled]="isLoading()"
+            placeholder="ID123456789"
+            required
+          >
+        </div>
+        <button 
+          type="submit" 
+          class="create-account-btn"
+          [disabled]="isLoading() || signupForm.invalid">
+          @if (isLoading()) {
+            <span class="loading-spinner"></span>
+            Creating account...
+          } @else {
+            Create account
+          }
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-content">
+      <div class="footer-bottom">        
+        <div class="footer-legal">
+          <span>Aurora Bank All Rights Reserved</span>
+          <div class="legal-links">
+            <a href="#" class="legal-link">Privacy Policy</a>
+            <span>|</span>
+            <a href="#" class="legal-link">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>

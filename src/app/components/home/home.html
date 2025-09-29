@@ -1,0 +1,228 @@
+<div class="banking-dashboard">
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Hero Section -->
+    <div class="hero-section">
+
+      <div class="hero-content">
+
+        
+        <h1 class="hero-title">
+          Welcome to Aurora Bank
+          Empowering Your <span class="highlight">Financial</span><br>
+          <span class="highlight">Journey</span>
+        </h1>
+        
+        <p class="hero-description">
+          At YourBank, our mission is to provide comprehensive banking solutions that empower
+          individuals and businesses to achieve their financial goals. We are committed to delivering
+          personalized and innovative services that prioritize our customers' needs.
+        </p>
+        
+        <button class="cta-button" (click)="navigateToSignup()">
+          Open Account
+        </button>
+      </div>
+
+        <div class="hero-image">
+            <img src="main.jpg" alt="Banking Illustration">
+        </div>
+
+    </div>
+
+    <!-- Products Section -->
+    <div class="product-section">
+      <div class="product-header">
+        <div>
+            <h2 class="section-title">Our <span class="highlight">Services</span></h2>
+      <p class="section-description">
+        Discover a range of comprehensive and customizable banking products at Aurora Bank, designed to suit your
+        unique financial needs and aspirations.
+      </p>
+        </div>
+      
+      <div class="product-tabs">
+        <button 
+          class="tab-button" 
+          [class.active]="activeProductTab === 'savings'"
+          (click)="selectProductTab('savings')">
+          Savings Account
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeProductTab === 'current'"
+          (click)="selectProductTab('current')">
+          Current Account
+        </button>
+      </div>
+      </div>
+      
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let product of currentProducts">
+          <div class="product-icon">{{ product.icon }}</div>
+          <h3>{{ product.title }}</h3>
+          <p>{{ product.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+      <div class="features-header">
+        <h2 class="section-title">Our <span class="highlight">Features</span></h2>
+        <p class="section-description">
+          Experience a host of powerful features at Aurora Bank, including seamless online banking, secure transactions, and personalized financial insights, all designed to enhance your banking experience.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="features-sidebar">
+          <button 
+            class="feature-nav-item" 
+            [class.active]="activeFeature === 'online-banking'"
+            (click)="selectFeature('online-banking')">
+            <span class="feature-icon">🌐</span>
+            <span>Online Banking</span>
+          </button>
+          <button 
+            class="feature-nav-item" 
+            [class.active]="activeFeature === 'financial-tools'"
+            (click)="selectFeature('financial-tools')">
+            <span class="feature-icon">📊</span>
+            <span>Financial Tools</span>
+          </button>
+          <button 
+            class="feature-nav-item" 
+            [class.active]="activeFeature === 'customer-support'"
+            (click)="selectFeature('customer-support')">
+            <span class="feature-icon">🎧</span>
+            <span>Customer Support</span>
+          </button>
+        </div>
+
+        <div class="features-content">
+          <div class="feature-cards">
+            <div class="feature-card" *ngFor="let feature of currentFeatures">
+              <div class="feature-card-icon">{{ feature.icon }}</div>
+              <h3>{{ feature.title }}</h3>
+              <p>{{ feature.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <div class="faq-header">
+        <h2 class="section-title"><span class="highlight">Frequently</span> Asked Questions</h2>
+        <p class="section-description">
+          Still you have any questions? Contact our Team via support&#64;aurorabank.com
+        </p>
+      </div>
+
+      <div class="faq-grid">
+        <button class="faq-item" [class.active]="activeFaq === 'account'" (click)="toggleFaq('account')">
+          <div class="faq-question">
+            <h3>How do I open an account with YourBank?</h3>
+            <span class="faq-toggle">{{ activeFaq === 'account' ? '−' : '+' }}</span>
+          </div>
+          <div class="faq-answer" [class.show]="activeFaq === 'account'">
+            <p>Opening an account with Aurora Bank is easy. Simply visit our website and click on the "Open an Account" button. Follow the prompts, provide the required information, and complete the application process. If you have any questions or need assistance, our customer support team is available to help.</p>
+          </div>
+        </button>
+
+        <button class="faq-item" [class.active]="activeFaq === 'documents'" (click)="toggleFaq('documents')">
+          <div class="faq-question">
+            <h3>What documents do I need to provide to apply for a loan?</h3>
+            <span class="faq-toggle">{{ activeFaq === 'documents' ? '−' : '+' }}</span>
+          </div>
+          <div class="faq-answer" [class.show]="activeFaq === 'documents'">
+            <p>The documents required for a loan application may vary depending on the type of loan you are applying for. Generally, you will need to provide identification documents, proof of income, employment verification, bank statements, pay stubs or tax returns, and information about the collateral (if applicable). Our loan officers will guide you through the specific requirements during the application process.</p>
+          </div>
+        </button>
+
+        <button class="faq-item" [class.active]="activeFaq === 'online-access'" (click)="toggleFaq('online-access')">
+          <div class="faq-question">
+            <h3>How can I access my accounts online?</h3>
+            <span class="faq-toggle">{{ activeFaq === 'online-access' ? '−' : '+' }}</span>
+          </div>
+          <div class="faq-answer" [class.show]="activeFaq === 'online-access'">
+            <p>Accessing your accounts online is simple and secure. Visit our website and click on the "Login" button. Enter your username and password to access your accounts. If you haven't registered for online banking, click on "Enroll Now" button and follow the registration process. If you need assistance, our customer support team is available to help.</p>
+          </div>
+        </button>
+
+        <button class="faq-item" [class.active]="activeFaq === 'security'" (click)="toggleFaq('security')">
+          <div class="faq-question">
+            <h3>Are my transactions and personal information secure?</h3>
+            <span class="faq-toggle">{{ activeFaq === 'security' ? '−' : '+' }}</span>
+          </div>
+          <div class="faq-answer" [class.show]="activeFaq === 'security'">
+            <p>At YourBank, we prioritize the security of your transactions and personal information. We employ industry-leading encryption and multi-factor authentication to ensure that your data is protected. Additionally, we regularly update our security measures to stay ahead of emerging threats. You can bank with confidence knowing that your information is safe with us.</p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="testimonials-section">
+      <div class="testimonials-header">
+        <h2 class="section-title">Our <span class="highlight">Testimonials</span></h2>
+        <p class="section-description">
+          Discover how Aurora Bank has transformed lives with innovative digital solutions and personalized customer service. See why our clients trust us for a secure and prosperous financial journey.
+        </p>
+      </div>
+      
+      <div class="testimonials-container">
+        <button class="testimonial-nav prev" (click)="previousTestimonial()" [disabled]="currentTestimonial === 0">‹</button>
+        
+        <div class="testimonials-grid">
+          <div class="testimonial-card" *ngFor="let testimonial of visibleTestimonials; let i = index">
+            <div class="quote-icon">"</div>
+            <p class="testimonial-text">{{ testimonial.text }}</p>
+            <div class="testimonial-author">
+              <strong>{{ testimonial.name }}</strong>
+            </div>
+          </div>
+        </div>
+        
+        <button class="testimonial-nav next" (click)="nextTestimonial()" [disabled]="currentTestimonial >= testimonials.length - 3">›</button>
+      </div>
+    </div>
+
+    <!-- Open Account Section -->
+    <div class="open-account-section">
+      <div class="open-account-content">
+        <div class="open-account-text">
+          <h2 class="section-title">Start your financial journey with <span class="highlight">Aurora Bank today!</span></h2>
+          <p class="section-description">
+            Ready to take control of your finances? Join Aurora Bank now, and let us help you achieve your financial goals with our tailored solutions and exceptional customer service.
+          </p>
+        </div>
+        <button class="cta-button" (click)="navigateToSignup()">
+          Open Account
+        </button>
+      </div>
+      <div class="open-account-pattern">
+        <div class="pattern-dots"></div>
+      </div>
+    </div>
+
+  </div>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-bottom">        
+        <div class="footer-legal">
+          <span>Aurora Bank All Rights Reserved</span>
+          <div class="legal-links">
+            <a href="#" class="legal-link">Privacy Policy</a>
+            <span>|</span>
+            <a href="#" class="legal-link">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -1,53 +1,63 @@
 <!-- Top Navigation Bar -->
 <div class="wrapper">
-  <nav class="top-nav">
-  
-  <div class="nav-brand">
-    <div class="logo">
-      <span class="logo-icon">🏦</span>
-      <span class="logo-text">YourBank</span>
-    </div>
-  </div>
-  
-  <!-- Desktop Navigation -->
-  <div class="nav-menu desktop-nav">
-    <a routerLink="/home" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Home</a>
-    <a routerLink="/career" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Careers</a>
-    <a routerLink="/about" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">About</a>
-    <a routerLink="/contact" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Contact</a>
-  </div>
-  
-  <div class="nav-actions">
-    <button class="theme-toggle" (click)="toggleTheme()" title="Toggle theme">
-      <span class="theme-icon">
-        @if (isDarkMode()) {
-          ☀️
-        } @else {
-          🌙
-        }
-      </span>
-    </button>
-    <div class="desktop-nav">
-      <button class="nav-btn secondary" (click)="navigateToSignup()">Sign Up</button>
-      <button class="nav-btn primary" (click)="navigateToLogin()">Login</button>
+  @if (!isOnDashboard()) {
+    <nav class="top-nav">
+    
+    <div class="nav-brand">
+      <div class="logo">
+          <span class="logo-text">AURORA <span class="highlight-text">BANK</span></span>
+      </div>
     </div>
     
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" title="Toggle menu">
-      <span class="hamburger">
-        @if (isMobileMenuOpen()) {
-          ✕
+    <!-- Desktop Navigation -->
+    <div class="nav-menu desktop-nav">
+      <a routerLink="/home" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Home</a>
+      <a routerLink="/career" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Careers</a>
+      <a routerLink="/about" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">About</a>
+      <a routerLink="/contact" routerLinkActive="active" class="nav-link" (click)="closeMobileMenu()">Contact</a>
+    </div>
+    
+    <div class="nav-actions">
+      <button class="theme-toggle" (click)="toggleTheme()" title="Toggle theme">
+        <span class="theme-icon">
+          @if (isDarkMode()) {
+            ☀️
+          } @else {
+            🌙
+          }
+        </span>
+      </button>
+      
+      <div class="desktop-nav auth-nav">
+        @if (isAuthenticated()) {
+          <div class="user-profile">
+            <span class="user-greeting">Welcome, {{ currentUser()?.firstName }}</span>
+            <a class="auth-link profile-link" (click)="navigateToDashboard()">Profile</a>
+            <a class="auth-link logout-link" (click)="logout()">Logout</a>
+          </div>
         } @else {
-          ☰
+          <a class="auth-link login-link" (click)="navigateToLogin()">Log in</a>
+          <a class="auth-link signup-link" (click)="navigateToSignup()">Sign up</a>
         }
-      </span>
-    </button>
-  </div>
-  
-</nav>
+      </div>
+      
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" title="Toggle menu">
+        <span class="hamburger">
+          @if (isMobileMenuOpen()) {
+            ✕
+          } @else {
+            ☰
+          }
+        </span>
+      </button>
+    </div>
+    
+    </nav>
+  }
 
   <!-- Mobile Menu Overlay -->
-  @if (isMobileMenuOpen()) {
+  @if (!isOnDashboard() && isMobileMenuOpen()) {
     <div class="mobile-menu-overlay" (click)="closeMobileMenu()" (keydown.escape)="closeMobileMenu()">
       <div class="mobile-menu" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
         <div class="mobile-menu-content">
@@ -59,13 +69,24 @@
           </div>
           
           <div class="mobile-nav-actions">
-            <button class="nav-btn secondary mobile-btn" (click)="navigateToSignup(); closeMobileMenu()">Sign Up</button>
-            <button class="nav-btn primary mobile-btn" (click)="navigateToLogin(); closeMobileMenu()">Login</button>
+            @if (isAuthenticated()) {
+              <div class="mobile-user-profile">
+                <span class="mobile-user-greeting">Welcome, {{ currentUser()?.firstName }}</span>
+                <a class="auth-link mobile-profile-link" (click)="navigateToDashboard(); closeMobileMenu()">Profile</a>
+                <a class="auth-link mobile-logout-link" (click)="logout()">Logout</a>
+              </div>
+            } @else {
+              <a class="auth-link mobile-login-link" (click)="navigateToLogin(); closeMobileMenu()">Log in</a>
+              <a class="auth-link mobile-signup-link" (click)="navigateToSignup(); closeMobileMenu()">Sign up</a>
+            }
           </div>
         </div>
       </div>
     </div>
   }
 
-  <router-outlet></router-outlet>
+  <main class="app-main" [class.full-height]="isOnDashboard()">
+    <router-outlet></router-outlet>
+  </main>
+  
 </div>

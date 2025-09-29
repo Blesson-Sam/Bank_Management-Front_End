@@ -1,0 +1,971 @@
+<div class="dashboard-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">Customer Dashboard
+        <span class="logo-text">Aurora Bank</span>
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <h3>General</h3>
+        <ul>
+          <li>
+            <button 
+              class="nav-item" 
+              [class.active]="activeSection() === 'overview'"
+              (click)="setActiveSection('overview')"
+            >
+              <span class="nav-icon">📊</span>
+              <span>Dashboard</span>
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item"
+              [class.active]="activeSection() === 'accounts'"
+              (click)="setActiveSection('accounts')"
+            >
+              <span class="nav-icon">💳</span>
+              <span>My Accounts</span>
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item"
+              [class.active]="activeSection() === 'transactions'"
+              (click)="setActiveSection('transactions')"
+            >
+              <span class="nav-icon">📜</span>
+              <span>Transaction History</span>
+            </button>
+          </li>
+          <li>
+            <button 
+              class="nav-item"
+              [class.active]="activeSection() === 'statistics'"
+              (click)="setActiveSection('statistics')"
+            >
+              <span class="nav-icon">📈</span>
+              <span>Profile</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+    
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <!-- <span class="nav-icon">🚪</span> -->
+        <span>Log Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="header">
+      <div class="header-left">
+        <h1>{{ activeSection() === 'overview' ? 'Dashboard' : 
+              activeSection() === 'accounts' ? 'My Account' :
+              activeSection() === 'transactions' ? 'Transaction History' :
+              activeSection() === 'statistics' ? 'Profile' :
+              activeSection() === 'admin-transactions' ? 'Transaction Management' : 'Dashboard' }}</h1>
+        <p class="header-subtitle">
+          {{ userType() === 'admin' ? 'Manage and monitor banking operations' : 'Keep and manage your money easier with IBankCore' }}
+        </p>
+      </div>
+      
+      <div class="header-right">
+      
+        <div class="admin-actions">
+        <div >
+          Welcome back, <strong>{{ currentUser()?.firstName }}</strong>
+        </div>
+      </div>
+        
+      </div>
+    </header>
+
+    <div class="content-area">
+      <!-- Overview Section -->
+      @if (activeSection() === 'overview') {
+        <div class="overview-content">
+          <!-- Quick Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <h3>Total Balance</h3>
+                <span class="stat-icon">💰</span>
+              </div>
+              <div class="stat-value">{{ getTotalBalance() }}</div>
+              <div class="stat-change positive">+2.5%</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-header">
+                <h3>Active Accounts</h3>
+                <span class="stat-icon">🏦</span>
+              </div>
+              <div class="stat-value">{{ userAccounts().length }}</div>
+              <div class="stat-change neutral">—</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-header">
+                <h3>Total Transfers</h3>
+                <span class="stat-icon">📊</span>
+              </div>
+              <div class="stat-value">{{ getCurrentMonthDeposits() }}</div>
+              <div class="stat-change positive">+12.3%</div>
+            </div>
+          </div>
+
+          <!-- Recent Activities -->
+          <div class="recent-activities">
+            <div class="section-header">
+              <h2>Recent Activities</h2>
+              <div class="activity-tabs">
+                <select class="filter-select" [value]="selectedAccountNumber() || ''" (change)="onAccountSelectionChange($any($event.target).value)">
+                  <option [value]="''" *ngIf="getSelectedAccountDisplayName() === ''">
+                  Select Account?
+                  </option>
+                  <option [value]="getSelectedAccountDisplayName()" *ngIf="getSelectedAccountDisplayName() !== ''">
+                      {{ getSelectedAccountDisplayName() }}
+                  </option>
+                  @for (account of userAccounts(); track account.accountNumber) {
+                    <option [value]="account.accountNumber">{{ account.accountType }} - ****{{ account.accountNumber.slice(-4) }}</option>
+                  }
+                </select>
+              
+              </div>
+            </div>
+            
+            <div class="activity-list">
+              @if (selectedAccountNumber()) {
+                <!-- Show filtered transactions for selected account -->
+                @for (transaction of filteredTransactions(); track transaction.id) {
+                  <div class="activity-item">
+                    <div class="activity-icon">
+                     <span> {{ transaction.type.toLowerCase() === 'deposit' ? '⬇️' : transaction.type.toLowerCase() === 'withdrawal' ? '⬆️' : '↔️' }}</span>
+                    </div>
+                    <div class="activity-details">
+                      <div class="activity-name">{{ transaction.description }}</div>
+                      <div class="activity-date">{{ formatDate(transaction.date) }}</div>
+                    </div>
+                    <div class="activity-amount" [class]="transaction.type">
+                      {{ transaction.type.toLowerCase() === 'withdrawal' ? '-' : '+' }}{{ formatCurrency(transaction.amount) }}
+                    </div>
+                  </div>
+                }
+                
+                @if (filteredTransactions().length === 0) {
+                  <div class="no-transactions">
+                    <p>No recent activities for this account</p>
+                  </div>
+                }
+              } @else {
+                <!-- Show recent transactions for all accounts -->
+                @if (recentTransactions().length === 0) {
+                  <div class="no-transactions">
+                    <p>No recent activities found</p>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Accounts Section -->
+      @if (activeSection() === 'accounts') {
+        <div class="accounts-content">
+          <div class="section-header">
+            <!-- <h2>My Accounts</h2> -->
+            <button class="create-btn" (click)="openCreateAccountModal()">Create New Account</button>
+          </div>
+          
+          @if (userAccounts().length > 0) {
+            <div class="accounts-grid">
+              @for (account of userAccounts(); track account.accountNumber) {
+                <div class="account-card">
+                  <div class="account-header">
+                    <div class="account-type">{{ account.accountType }}</div>
+                    <div class="account-status" [class]="account.status.toLowerCase()">{{ account.status }}</div>
+                  </div>
+                  <div class="account-number">**** **** **** {{ account.accountNumber.slice(-4) }}</div>
+                  <div class="account-balance">{{ formatCurrency(account.balance) }}</div>
+                  <div class="account-actions">
+                    <button class="action-btn" (click)="openDepositModal(account.accountNumber)">Deposit</button>
+                    <button class="action-btn" (click)="openWithdrawModal(account.accountNumber)">Withdraw</button>
+                    <button class="action-btn" (click)="openTransferModal(account.accountNumber)">Transfer</button>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="no-accounts">
+              <div class="no-accounts-icon">🏦</div>
+              <h3>No Accounts Found</h3>
+              <p>You don't have any bank accounts yet. Create your first account to get started with IBankCore.</p>
+              <button class="btn-create-first" (click)="openCreateAccountModal()">
+                <span class="btn-icon">➕</span>
+                Create Your First Account
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Transactions Section -->
+      @if (activeSection() === 'transactions') {
+        <div class="transactions-content">
+          <div class="section-header">
+            <h2></h2>
+            <div class="filter-controls">
+              <select class="filter-select" [value]="selectedAccountNumber() || ''" (change)="onAccountSelectionChange($any($event.target).value)">
+                 <option [value]="''" *ngIf="getSelectedAccountDisplayName() === ''">
+    Select Account?
+  </option>
+  <option [value]="getSelectedAccountDisplayName()" *ngIf="getSelectedAccountDisplayName() !== ''">
+    {{ getSelectedAccountDisplayName() }}
+  </option>
+                @for (account of userAccounts(); track account.accountNumber) {
+                  <option [value]="account.accountNumber">{{ account.accountType }} - {{ account.accountNumber.slice(-4) }}</option>
+                }
+              </select>
+             
+              
+              <select class="filter-select" [value]="selectedMonth()" (change)="onMonthYearChange(selectedYear(), +$any($event.target).value)">
+                @for (month of getMonths(); track month.value) {
+                  <option [value]="month.value" [selected]="month.value === selectedMonth()">{{ month.name }}</option>
+                }
+              </select>
+              
+              <select class="filter-select" [value]="selectedYear()" (change)="onMonthYearChange(+$any($event.target).value, selectedMonth())">
+                @for (year of getAvailableYears(); track year) {
+                  <option [value]="year" [selected]="year === selectedYear()">{{ year }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          
+          <div class="transactions-table">
+            <div class="table-header">
+              <div class="col-header">Transaction</div>
+              <div class="col-header">Date</div>
+              <div class="col-header">Amount</div>
+              <div class="col-header">Status</div>
+            </div>
+            
+            @if (selectedAccountNumber()) {
+              <!-- Show filtered transactions for selected account -->
+              @for (transaction of filteredTransactions(); track transaction.id) {
+                <div class="table-row">
+                  <div class="transaction-info">
+                    <div class="transaction-icon">
+                      <span> {{ transaction.type.toLowerCase() === 'deposit' ? '⬇️' : transaction.type.toLowerCase() === 'withdrawal' ? '⬆️' : '↔️' }}</span>
+                    </div>
+                    <div class="transaction-details">
+                      <div class="transaction-description">{{ transaction.description }}</div>
+                      <div class="transaction-type">{{ transaction.type | titlecase }}</div>
+                    </div>
+                  </div>
+                  <div class="transaction-date">{{ formatDate(transaction.date) }}</div>
+                  <div class="transaction-amount" [class]="transaction.type">
+                    {{ transaction.type.toLowerCase() === 'withdrawal' ? '-' : '+' }}{{ formatCurrency(transaction.amount) }}
+                  </div>
+                  <div class="transaction-status" [class]="transaction.status.toLowerCase()">
+                    <span class="status-indicator"></span>
+                    {{ transaction.status }}
+                  </div>
+                </div>
+              }
+              
+              @if (filteredTransactions().length === 0) {
+                <div class="no-transactions">
+                  <p>No transactions found for the selected account in {{ getMonths()[selectedMonth() - 1].name }} {{ selectedYear() }}</p>
+                </div>
+              }
+            } @else {
+              <!-- Show recent transactions for all accounts -->
+              
+              @if (recentTransactions().length === 0) {
+                <div class="no-transactions">
+                  <p>No recent transactions found</p>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Profile Section -->
+      @if (activeSection() === 'statistics') {
+        <div class="content-section profile-content">
+          
+          <!-- Profile Header with Banner -->
+          <div class="profile-banner">
+            <!-- <div class="banner-gradient"></div> -->
+            <div class="profile-banner-content">
+              
+              <div class="profile-banner-info">
+                <h1 class="profile-name">
+                  {{ userProfile()?.firstName || currentUser()?.firstName }} 
+                  {{ userProfile()?.lastName || currentUser()?.lastName }}
+                </h1>
+                <p class="profile-email">{{ userProfile()?.email || currentUser()?.email }}</p>
+                <div class="profile-badges">
+                  <span class="status-badge" 
+                        [class.active]="userProfile()?.status === 'ACTIVE'" 
+                        [class.inactive]="userProfile()?.status !== 'ACTIVE'">
+                    @if (userProfile()?.status === 'ACTIVE') {
+                      <span class="badge-icon">🟢</span>
+                    } @else {
+                      <span class="badge-icon">🔴</span>
+                    }
+                    {{ userProfile()?.status || 'INACTIVE' }}
+                  </span>
+                </div>
+              </div>
+            
+              <div class="profile-actions">
+                <button class="btn-edit-profile" (click)="openEditProfileModal()">
+                  <span class="btn-icon">✏️</span>
+                  Edit Profile
+                </button>
+              </div>
+            </div>
+          </div>
+
+          @if (userProfile()) {
+            <!-- Profile Details Cards -->
+            <div class="profile-cards-grid">
+              
+              <!-- Personal Information Card -->
+              <div class="profile-card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <span class="card-icon">👤</span>
+                    Personal Information
+                  </h3>
+                </div>
+                <div class="card-content">
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <div class="info-label">
+                        <span class="label-icon">📝</span>
+                        First Name
+                      </div>
+                      <div class="info-value">{{ userProfile()?.firstName }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                      <div class="info-label">
+                        <span class="label-icon">📝</span>
+                        Last Name
+                      </div>
+                      <div class="info-value">{{ userProfile()?.lastName }}</div>
+                    </div>
+                    
+                    <div class="info-item full-width">
+                      <div class="info-label">
+                        <span class="label-icon">📧</span>
+                        Email Address
+                      </div>
+                      <div class="info-value">{{ userProfile()?.email }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                      <div class="info-label">
+                        <span class="label-icon">📱</span>
+                        Phone Number
+                      </div>
+                      <div class="info-value">{{ userProfile()?.phone }}</div>
+                    </div>
+
+                    @if (userProfile()?.nationalId) {
+                      <div class="info-item">
+                        <div class="info-label">
+                          <span class="label-icon">🆔</span>
+                          National ID
+                        </div>
+                        <div class="info-value">{{ userProfile()?.nationalId }}</div>
+                      </div>
+                    }
+                  
+                  </div>
+                  @if (userProfile()?.address) {
+                    <div class="address-display">
+                      <div class="address-icon">📍</div>
+                      <div class="address-text">{{ userProfile()?.address }}</div>
+                    </div>
+                  }
+                  <div class="card-content">
+                  <div class="stats-grid">
+                    <div class="stat-item">
+                      <div class="stat-value">{{ userAccounts().length }}</div>
+                      <div class="stat-label">Active Accounts</div>
+                    </div>
+                    
+                    <div class="stat-item">
+                      <div class="stat-value">{{ recentTransactions().length }}</div>
+                      <div class="stat-label">Recent Transactions</div>
+                    </div>
+                    
+    
+                    
+                    <div class="stat-item">
+                      <div class="stat-value">2025</div>
+                      <div class="stat-label">Member Since</div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+          }
+          @else {
+            <!-- Enhanced Loading State -->
+            <div class="profile-loading">
+              <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+              </div>
+              <h3>Loading your profile...</h3>
+              <p>Please wait while we fetch your information</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </main>
+
+  <!-- Create Account Modal -->
+  @if (showCreateAccountModal()) {
+    <div class="modal-overlay" (click)="closeCreateAccountModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Create New Account</h2>
+          <button class="modal-close" (click)="closeCreateAccountModal()">×</button>
+        </div>
+        
+        <form class="create-account-form">
+          <div class="form-group">
+            <label for="accountType">Account Type</label>
+            <select 
+              id="accountType" 
+              class="form-control" 
+              [value]="newAccountForm.accountType()" 
+              (change)="updateAccountType($any($event.target).value)"
+            >
+              <option value="">Select Account Type</option>
+              <option value="SAVINGS">Savings Account</option>
+              <option value="CURRENT">Current Account</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="initialDeposit">Initial Deposit</label>
+            <input 
+              type="number" 
+              id="initialDeposit" 
+              class="form-control" 
+              placeholder="Enter initial deposit amount"
+              [value]="newAccountForm.initialDeposit()" 
+              (input)="updateInitialDeposit(+$any($event.target).value)"
+              min="0"
+              step="0.01"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="customInterestRate">Custom Interest Rate (%)</label>
+            <input 
+              type="number" 
+              id="customInterestRate" 
+              class="form-control" 
+              placeholder="Enter interest rate"
+              [value]="newAccountForm.customInterestRate()" 
+              (input)="updateCustomInterestRate(+$any($event.target).value)"
+              min="0"
+              max="100"
+              step="0.1"
+            />
+          </div>
+          
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeCreateAccountModal()">Cancel</button>
+            <button type="button" class="btn-create" (click)="submitCreateAccount()">Create Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Deposit Modal -->
+  @if (showDepositModal()) {
+    <div class="modal-overlay" (click)="closeDepositModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Make Deposit</h2>
+          <button class="modal-close" (click)="closeDepositModal()">×</button>
+        </div>
+        
+        <form class="deposit-form">
+          @if (getAccountInfo(depositForm.accountNumber())) {
+            <div class="account-info-display">
+              <h4>Account Details</h4>
+              <p><strong>Account Type:</strong> {{ getAccountInfo(depositForm.accountNumber())?.accountType }}</p>
+              <p><strong>Account Number:</strong> {{ depositForm.accountNumber() }}</p>
+              <p><strong>Current Balance:</strong> {{ formatCurrency(getAccountInfo(depositForm.accountNumber())?.balance || 0) }}</p>
+            </div>
+          }
+          
+          <div class="form-group">
+            <label for="depositAccountNumber">Account Number</label>
+            <input 
+              type="text" 
+              id="depositAccountNumber" 
+              class="form-control" 
+              [value]="depositForm.accountNumber()" 
+              readonly
+              style="background-color: #f5f5f5; cursor: not-allowed;"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="depositAmount">Amount</label>
+            <input 
+              type="number" 
+              id="depositAmount" 
+              class="form-control" 
+              placeholder="Enter deposit amount"
+              [value]="depositForm.amount()" 
+              (input)="updateDepositAmount(+$any($event.target).value)"
+              min="0.01"
+              step="0.01"
+              required
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="depositDescription">Description</label>
+            <input 
+              type="text" 
+              id="depositDescription" 
+              class="form-control" 
+              placeholder="Enter deposit description (e.g., Salary deposit)"
+              [value]="depositForm.description()" 
+              (input)="updateDepositDescription($any($event.target).value)"
+              required
+            />
+          </div>
+          
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeDepositModal()">Cancel</button>
+            <button 
+              type="button" 
+              class="btn-create" 
+              [disabled]="!isDepositFormValid()"
+              (click)="submitDeposit()"
+            >
+              Make Deposit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Withdrawal Modal -->
+  @if (showWithdrawModal()) {
+    <div class="modal-overlay" (click)="closeWithdrawModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Make Withdrawal</h2>
+          <button class="modal-close" (click)="closeWithdrawModal()">×</button>
+        </div>
+        
+        <form class="withdrawal-form">
+          @if (getAccountInfo(withdrawForm.accountNumber())) {
+            <div class="account-info-display">
+              <h4>Account Details</h4>
+              <p><strong>Account Type:</strong> {{ getAccountInfo(withdrawForm.accountNumber())?.accountType }}</p>
+              <p><strong>Account Number:</strong> {{ withdrawForm.accountNumber() }}</p>
+              <p><strong>Available Balance:</strong> {{ formatCurrency(getAccountInfo(withdrawForm.accountNumber())?.balance || 0) }}</p>
+            </div>
+          }
+          
+          <div class="form-group">
+            <label for="withdrawAccountNumber">Account Number</label>
+            <input 
+              type="text" 
+              id="withdrawAccountNumber" 
+              class="form-control" 
+              [value]="withdrawForm.accountNumber()" 
+              readonly
+              style="background-color: #f5f5f5; cursor: not-allowed;"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="withdrawAmount">Amount</label>
+            <input 
+              type="number" 
+              id="withdrawAmount" 
+              class="form-control" 
+              [class.insufficient-funds]="withdrawForm.amount() > 0 && getAccountInfo(withdrawForm.accountNumber()) && withdrawForm.amount() > getAccountInfo(withdrawForm.accountNumber())!.balance"
+              placeholder="Enter withdrawal amount"
+              [value]="withdrawForm.amount()" 
+              (input)="updateWithdrawAmount(+$any($event.target).value)"
+              [max]="getAccountInfo(withdrawForm.accountNumber())?.balance || 0"
+              min="0.01"
+              step="0.01"
+              required
+            />
+            @if (withdrawForm.amount() > 0 && getAccountInfo(withdrawForm.accountNumber()) && withdrawForm.amount() > getAccountInfo(withdrawForm.accountNumber())!.balance) {
+              <div class="insufficient-funds-warning">
+                <span>⚠️</span>
+                <span>Insufficient funds. Available balance: {{ formatCurrency(getAccountInfo(withdrawForm.accountNumber())!.balance) }}</span>
+              </div>
+            }
+          </div>
+          
+          <div class="form-group">
+            <label for="withdrawDescription">Description</label>
+            <input 
+              type="text" 
+              id="withdrawDescription" 
+              class="form-control" 
+              placeholder="Enter withdrawal description (e.g., Personal Use)"
+              [value]="withdrawForm.description()" 
+              (input)="updateWithdrawDescription($any($event.target).value)"
+              required
+            />
+          </div>
+          
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeWithdrawModal()">Cancel</button>
+            <button 
+              type="button" 
+              class="btn-create btn-withdraw" 
+              [disabled]="!isWithdrawFormValid()"
+              (click)="submitWithdraw()"
+            >
+              Make Withdrawal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Transfer Modal -->
+  @if (showTransferModal()) {
+    <div class="modal-overlay" (click)="closeTransferModal()">
+      <div class="modal-content transfer-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Transfer Money</h2>
+          <button class="modal-close" (click)="closeTransferModal()">×</button>
+        </div>
+        
+        <form class="transfer-form">
+          @if (getAccountInfo(transferForm.fromAccountNumber())) {
+            <div class="account-info-display">
+              <h4>From Account Details</h4>
+              <p><strong>Account Type:</strong> {{ getAccountInfo(transferForm.fromAccountNumber())?.accountType }}</p>
+              <p><strong>Account Number:</strong> {{ transferForm.fromAccountNumber() }}</p>
+              <p><strong>Available Balance:</strong> {{ formatCurrency(getAccountInfo(transferForm.fromAccountNumber())?.balance || 0) }}</p>
+            </div>
+          }
+          
+          <div class="form-group">
+            <label for="fromAccountNumber">From Account</label>
+            <input 
+              type="text" 
+              id="fromAccountNumber" 
+              class="form-control" 
+              [value]="transferForm.fromAccountNumber()" 
+              readonly
+              style="background-color: #f5f5f5; cursor: not-allowed;"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="toAccountNumber">To Account Number</label>
+            <input 
+              type="text" 
+              id="toAccountNumber" 
+              class="form-control" 
+              placeholder="Enter recipient account number (e.g., ACC840852B8EE6414)"
+              [value]="transferForm.toAccountNumber()" 
+              (input)="updateToAccountNumber($any($event.target).value)"
+              required
+            />
+            @if (transferForm.fromAccountNumber() && transferForm.toAccountNumber() && transferForm.fromAccountNumber() === transferForm.toAccountNumber()) {
+              <div class="validation-warning">
+                <span>⚠️</span>
+                <span>Cannot transfer to the same account</span>
+              </div>
+            }
+          </div>
+          
+          <div class="form-group">
+            <label for="transferAmount">Amount</label>
+            <input 
+              type="number" 
+              id="transferAmount" 
+              class="form-control" 
+              [class.insufficient-funds]="transferForm.amount() > 0 && getAccountInfo(transferForm.fromAccountNumber()) && transferForm.amount() > getAccountInfo(transferForm.fromAccountNumber())!.balance"
+              placeholder="Enter transfer amount"
+              [value]="transferForm.amount()" 
+              (input)="updateTransferAmount(+$any($event.target).value)"
+              [max]="getAccountInfo(transferForm.fromAccountNumber())?.balance || 0"
+              min="0.01"
+              step="0.01"
+              required
+            />
+            @if (transferForm.amount() > 0 && getAccountInfo(transferForm.fromAccountNumber()) && transferForm.amount() > getAccountInfo(transferForm.fromAccountNumber())!.balance) {
+              <div class="insufficient-funds-warning">
+                <span>⚠️</span>
+                <span>Insufficient funds. Available balance: {{ formatCurrency(getAccountInfo(transferForm.fromAccountNumber())!.balance) }}</span>
+              </div>
+            }
+          </div>
+          
+          <div class="form-group">
+            <label for="transferDescription">Description</label>
+            <input 
+              type="text" 
+              id="transferDescription" 
+              class="form-control" 
+              placeholder="Enter transfer description (e.g., Gift Pack, Payment)"
+              [value]="transferForm.description()" 
+              (input)="updateTransferDescription($any($event.target).value)"
+              required
+            />
+          </div>
+
+          @if (transferForm.fromAccountNumber() && transferForm.toAccountNumber() && transferForm.amount() > 0) {
+            <div class="transfer-summary">
+              <h4>🔄 Transfer Summary</h4>
+              <div class="summary-row">
+                <span>From:</span>
+                <span>*{{ transferForm.fromAccountNumber().slice(-4) }}</span>
+              </div>
+              <div class="summary-row">
+                <span>To:</span>
+                <span>*{{ transferForm.toAccountNumber().slice(-4) }}</span>
+              </div>
+              <div class="summary-row">
+                <span>Amount:</span>
+                <span class="amount-highlight">{{ formatCurrency(transferForm.amount()) }}</span>
+              </div>
+              <div class="summary-row">
+                <span>Description:</span>
+                <span>{{ transferForm.description() || 'No description' }}</span>
+              </div>
+            </div>
+          }
+          
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeTransferModal()">Cancel</button>
+            <button 
+              type="button" 
+              class="btn-create" 
+              [disabled]="!isTransferFormValid()"
+              (click)="submitTransfer()"
+            >
+              Transfer Money
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Enhanced Edit Profile Modal -->
+  @if (showEditProfileModal()) {
+    <div class="modal-overlay profile-modal-overlay" (click)="closeEditProfileModal()">
+      <div class="modal-content profile-modal-content" (click)="$event.stopPropagation()">
+        
+        <!-- Modal Header -->
+        <div class="modal-header profile-modal-header">
+          <div class="modal-title-section">
+            <h2 class="modal-title">
+              <span class="title-icon">✏️</span>
+              Edit Profile
+            </h2>
+            <p class="modal-subtitle">Update your personal information</p>
+          </div>
+          <button class="modal-close profile-modal-close" (click)="closeEditProfileModal()">
+            <span>×</span>
+          </button>
+        </div>
+        
+        <!-- Modal Body -->
+        <div class="modal-body profile-modal-body">
+          <form class="edit-profile-form">
+    
+
+            <!-- Form Fields -->
+            <div class="form-sections">
+              
+              <!-- Personal Information Section -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <span class="section-icon">👤</span>
+                  Personal Information
+                </h3>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="firstName" class="form-label">
+                      <span class="label-icon">📝</span>
+                      First Name
+                    </label>
+                    <input 
+                      type="text" 
+                      id="firstName" 
+                      class="form-control modern-input" 
+                      placeholder="Enter your first name"
+                      [value]="profileForm.firstName()" 
+                      (input)="profileForm.firstName.set($any($event.target).value)"
+                      required
+                    >
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="lastName" class="form-label">
+                      <span class="label-icon">📝</span>
+                      Last Name
+                    </label>
+                    <input 
+                      type="text" 
+                      id="lastName" 
+                      class="form-control modern-input" 
+                      placeholder="Enter your last name"
+                      [value]="profileForm.lastName()" 
+                      (input)="profileForm.lastName.set($any($event.target).value)"
+                      required
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Information Section -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <span class="section-icon">📞</span>
+                  Contact Information
+                </h3>
+
+                <div class="form-group">
+                  <label for="email" class="form-label">
+                    <span class="label-icon">📧</span>
+                    Email Address
+                  </label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    class="form-control modern-input" 
+                    placeholder="Enter your email address"
+                    [value]="profileForm.email()" 
+                    (input)="profileForm.email.set($any($event.target).value)"
+                    required
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="phone" class="form-label">
+                    <span class="label-icon">📱</span>
+                    Phone Number
+                  </label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    class="form-control modern-input" 
+                    placeholder="Enter your phone number"
+                    [value]="profileForm.phone()" 
+                    (input)="profileForm.phone.set($any($event.target).value)"
+                    required
+                  >
+                </div>
+              </div>
+
+              <!-- Additional Information Section -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <span class="section-icon">📍</span>
+                  Additional Information
+                </h3>
+
+                <div class="form-group">
+                  <label for="address" class="form-label">
+                    <span class="label-icon">🏠</span>
+                    Address
+                    <span class="optional-label">(Optional)</span>
+                  </label>
+                  <textarea 
+                    id="address" 
+                    class="form-control modern-textarea" 
+                    placeholder="Enter your complete address"
+                    rows="3"
+                    [value]="profileForm.address()" 
+                    (input)="profileForm.address.set($any($event.target).value)"
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="nationalId" class="form-label">
+                    <span class="label-icon">🆔</span>
+                    National ID
+                    <span class="optional-label">(Optional)</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    id="nationalId" 
+                    class="form-control modern-input" 
+                    placeholder="Enter your national ID"
+                    [value]="profileForm.nationalId()" 
+                    (input)="profileForm.nationalId.set($any($event.target).value)"
+                  >
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Modal Footer -->
+        <div class="modal-footer profile-modal-footer">
+          <div class="footer-actions">
+            <button type="button" class="btn-cancel modern-btn-cancel" (click)="closeEditProfileModal()">
+              <span class="btn-icon">✕</span>
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              class="btn-save modern-btn-save" 
+              [disabled]="!isFormValid()"
+              [class.disabled]="!isFormValid()"
+              (click)="updateProfile()"
+            >
+              <span class="btn-icon">💾</span>
+              Save Changes
+            </button>
+          </div>
+          <div class="footer-info">
+            <p class="info-text">
+              <span class="info-icon">🔒</span>
+              Your information is secure and encrypted
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

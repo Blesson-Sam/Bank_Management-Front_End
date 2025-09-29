@@ -1,5 +1,7 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { AuthService } from './services/auth.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +12,14 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/rou
 export class App implements OnInit {
   protected readonly title = signal('BankUI');
   private router = inject(Router);
+  private authService = inject(AuthService);
+  
+  // Authentication state from service
+  isAuthenticated = this.authService.isAuthenticated;
+  currentUser = this.authService.currentUser;
+  
+  // Route tracking
+  isOnDashboard = signal(false);
   
   // Theme management
   isDarkMode = signal(false);
@@ -25,6 +35,18 @@ export class App implements OnInit {
     const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
     this.isDarkMode.set(isDark);
     this.applyTheme(isDark);
+
+    // Track route changes to detect dashboard (both customer and admin)
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        const isDashboard = event.url === '/dashboard' || event.url === '/admin-dashboard';
+        this.isOnDashboard.set(isDashboard);
+      });
+
+    // Set initial state based on current URL
+    const currentUrl = this.router.url;
+    this.isOnDashboard.set(currentUrl === '/dashboard' || currentUrl === '/admin-dashboard');
   }
 
   toggleTheme() {
@@ -56,5 +78,20 @@ export class App implements OnInit {
 
   closeMobileMenu() {
     this.isMobileMenuOpen.set(false);
+  }
+
+  navigateToDashboard() {
+    this.authService.navigateToRoleDashboard();
+  }
+
+  logout() {
+    // Use auth service to logout
+    this.authService.logout();
+    
+    // Close mobile menu if open
+    this.closeMobileMenu();
+    
+    // Redirect to home
+    this.router.navigate(['/home']);
   }
 }
